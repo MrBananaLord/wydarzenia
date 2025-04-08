@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #event-display {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Talia wydarzeń</h1>
+  <button id="draw-card">Ciągnij</button>
+  <div id="event-display"></div>
+
+  <script>
+    const events = [
+      {
+        name: "Wyspa Skarbów",
+        actions: [
+          {
+            type: "explore",
+            name: "Przeszukaj plażę",
+            directions: ["N", "E", "S"]
+          },
+          {
+            type: "trade",
+            name: "Handluj z piratami",
+            resources: ["złoto", "rum"]
+          }
+        ]
+      },
+      {
+        name: "Wrak Statku",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj wrak",
+            directions: ["W", "N"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z krabami",
+            enemy: {
+              name: "gigantyczny krab",
+              health: 4,
+              attack: 3
+            },
+            rewards: ["perły", "złoto"]
+          }
+        ]
+      },
+      {
+        name: "Ukryta Jaskinia",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj jaskinię",
+            directions: ["S", "S", "E"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z nietoperzami",
+            enemy: {
+              name: "nietoperze wampiry",
+              health: 2,
+              attack: 1
+            },
+            rewards: ["klejnoty", "złoto"]
+          }
+        ]
+      },
+      {
+        name: "Port Piracki",
+        actions: [
+          {
+            type: "trade",
+            name: "Kupuj towary",
+            resources: ["proch strzelniczy", "rum"]
+          }
+        ]
+      },
+      {
+        name: "Zatopiona Łódź",
+        actions: [
+          {
+            type: "explore",
+            name: "Przeszukaj wrak",
+            directions: ["E", "N"]
+          }
+        ]
+      },
+      {
+        name: "Obóz Tubylców",
+        actions: [
+          {
+            type: "trade",
+            name: "Handluj z tubylcami",
+            resources: ["owoce", "złoto"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z wojownikami",
+            enemy: {
+              name: "wojownik tubylców",
+              health: 3,
+              attack: 2
+            },
+            rewards: ["złoto", "broń"]
+          }
+        ]
+      },
+      {
+        name: "Zaginiona Latarnia",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj latarnię",
+            directions: ["W", "W", "S"]
+          }
+        ]
+      },
+      {
+        name: "Zatoka Rekinów",
+        actions: [
+          {
+            type: "fight",
+            name: "Walcz z rekinami",
+            enemy: {
+              name: "rekin",
+              health: 5,
+              attack: 4
+            },
+            rewards: ["złoto", "skóra"]
+          }
+        ]
+      },
+      {
+        name: "Wyspa Duchów",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj ruiny",
+            directions: ["N", "E", "E"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z duchami",
+            enemy: {
+              name: "duch pirata",
+              health: 3,
+              attack: 3
+            },
+            rewards: ["klejnoty", "złoto"]
+          }
+        ]
+      },
+      {
+        name: "Zaginiona Flota",
+        actions: [
+          {
+            type: "explore",
+            name: "Przeszukaj statki",
+            directions: ["S", "W"]
+          },
+          {
+            type: "trade",
+            name: "Handluj z ocalałymi",
+            resources: ["złoto", "proch strzelniczy"]
+          }
+        ]
+      },
+      {
+        name: "Jaskinia Skarbów",
+        actions: [
+          {
+            type: "explore",
+            name: "Szukaj skarbu",
+            directions: ["E", "E", "N"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z piratami",
+            enemy: {
+              name: "strażnik skarbu",
+              health: 4,
+              attack: 3
+            },
+            rewards: ["złoto", "klejnoty"]
+          }
+        ]
+      },
+      {
+        name: "Zatoka Ciszy",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj zatokę",
+            directions: ["N", "W", "S"]
+          }
+        ]
+      },
+      {
+        name: "Wyspa Wulkaniczna",
+        actions: [
+          {
+            type: "explore",
+            name: "Zbadaj wulkan",
+            directions: ["S", "S", "E"]
+          },
+          {
+            type: "fight",
+            name: "Walcz z jaszczurkami",
+            enemy: {
+              name: "ognista jaszczurka",
+              health: 3,
+              attack: 2
+            },
+            rewards: ["złoto", "kamienie szlachetne"]
+          }
+        ]
+      },
+      {
+        name: "Zaginiona Wyspa",
+        actions: [
+          {
+            type: "explore",
+            name: "Przeszukaj wyspę",
+            directions: ["E", "N", "W"]
+          },
+          {
+            type: "trade",
+            name: "Handluj z rozbitkami",
+            resources: ["złoto", "rum"]
+          }
+        ]
+      }
+    ];
+
+    document.getElementById('draw-card').addEventListener('click', () => {
+      const randomEvent = events[Math.floor(Math.random() * events.length)];
+
+      document.getElementById('event-display').textContent = `${randomEvent.name}`;
+      const actionsContainer = document.createElement('div');
+      actionsContainer.id = 'actions-container';
+      randomEvent.actions.forEach(action => {
+        const actionButton = document.createElement('button');
+        actionButton.textContent = action.name;
+
+        actionButton.addEventListener('click', () => {
+          const resultDisplay = document.createElement('div');
+          resultDisplay.id = 'result-display';
+
+          if (action.type === 'explore') {
+            resultDisplay.textContent = `Wskazówki: ${action.directions.join(', ')}`;
+          } else if (action.type === 'trade') {
+            resultDisplay.textContent = `Dobra: ${action.resources.join(', ')}`;
+          } else if (action.type === 'fight') {
+            resultDisplay.textContent = `Wróg: ${action.enemy.name}, Zdrowie: ${action.enemy.health}, Siła: ${action.enemy.attack}. Nagroda: ${action.rewards.join(', ')}`;
+          }
+
+          const existingResultDisplay = document.getElementById('result-display');
+          if (existingResultDisplay) {
+            existingResultDisplay.remove();
+          }
+
+          document.body.appendChild(resultDisplay);
+        });
+        actionsContainer.appendChild(actionButton);
+      });
+
+      const existingActionsContainer = document.getElementById('actions-container');
+      if (existingActionsContainer) {
+        existingActionsContainer.remove();
+      }
+
+      document.body.appendChild(actionsContainer);
+    });
+  </script>
+</body>
+
+</html>
+
+</html>
