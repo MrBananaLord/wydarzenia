@@ -49,13 +49,13 @@
       navalEnemyNames: ["Pirat", "Syrena", "Kraken", "Wąż Morski", "Statek Widmo", "Nautilus", "Olbrzymia Kałamarnica", "Morski Demon", "Kapitan Widmo", "Mroczna Fregata"],
       explorationNames: ["Odkrycie Wyspy", "Nurkowanie na Rafie Koralowej", "Podwodne Ruiny", "Oceaniczna Podróż", "Tajemnicza Jaskinia", "Zaginiona Latarnia", "Mapa Skarbów", "Zatopiona Świątynia"],
       socialInteractionNames: ["Handel", "Dyplomacja", "Targowanie", "Festiwal", "Uczta", "Rytuał", "Spotkanie z Kupcem", "Negocjacje", "Sojusz", "Wizyta w Karczmie"],
-      directions: ["Północ", "Południe", "Wschód", "Zachód", "Północny Wschód", "Północny Zachód", "Południowy Wschód", "Południowy Zachód"]
+      directions: ["N", "S", "E", "W", "NE", "NW", "SE", "SW"]
     }
 
     const resources = {
-      epic_story: { name: "Epicka historia", cost: 6, weight: 5 },
-      character: { name: "Postać", cost: 4, weight: 2 },
-      gold: { name: "Zołto", cost: 2, weight: 3 },
+      epic_story: { name: "Epicka historia", cost: 8, weight: 5 },
+      character: { name: "Postać", cost: 4, weight: 3 },
+      gold: { name: "Zołto", cost: 1, weight: 1 },
       rum: { name: "Rum", cost: 2, weight: 3 },
       spice: { name: "Przyprawa", cost: 4, weight: 3 },
     }
@@ -132,9 +132,10 @@
         this.name = names.explorationNames[Math.floor(Math.random() * names.explorationNames.length)];
 
         this.path = Array.from({ length: Math.floor(Math.random() * 19) + 2 }, () => {
-          return names.directions.splice(Math.floor(Math.random() * names.directions.length), 1)[0];
+          const directions = [...names.directions];
+          return directions.splice(Math.floor(Math.random() * directions.length), 1)[0];
         }).filter((direction, index, array) => {
-          return index === 0 || names.direction !== array[index - 1];
+          return index === 0 || direction !== array[index - 1];
         });
 
         this.rewards = new RewardsGenerator(
