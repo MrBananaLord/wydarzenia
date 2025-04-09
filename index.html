@@ -116,12 +116,12 @@
 
       get body() {
         return `
-        <h4>${this.name}</h4>
-        <h5>Wrogowie</h5> 
+        <h3>${this.icon} ${this.name}</h3>
+        <h4>Wrogowie</h4> 
         ${this.enemies.map(enemy =>
           `<p>${enemy.name} (HP: ${enemy.health}, Atak: ${enemy.attack})</p>`
         ).join("")}
-        <h5>Nagroda</h5> 
+        <h4>Nagroda</h4> 
         <p>${this.rewards.join(", ")}</p>
         `;
       }
@@ -148,7 +148,7 @@
 
       get body() {
         return `
-        <h4>${this.name}</h4>
+        <h3>${this.icon} ${this.name}</h3>
         <p>Ścieżka: ${this.path.join(", ")}</p>
         <p>Nagroda: ${this.rewards.join(", ")}</p>
         `;
@@ -172,7 +172,7 @@
       get body() {
 
         return `
-          <h4>${this.name}</h4>
+          <h3>${this.icon} ${this.name}</h3>
           <p>Zapotrzebowanie: ${this.demand.map(d => d.name).join(", ")}</p>
           <p>Nagroda: ${this.production.name}</p>
         `;
@@ -204,12 +204,9 @@
         return `
           <div class="card">
             <h2>${this.name}</h2>
-            ${this.actions.map(action => `
             <div>
-              <h3>${action.icon} ${action.name}</h3>
-              <div>${action.body}</div>
+              ${this.actions.map(action => action.body).join('')}
             </div>
-            `).join('')}
           </div>
         `
       }
