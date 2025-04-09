@@ -41,14 +41,15 @@
 
   <script>
     const names = {
-      landEventNames: ["Hidden Cove", "Abandoned Fort", "Smuggler's Den", "Treasure Cache", "Haunted Forest", "Ancient Ruins"],
-      navalEventNames: ["Shipwreck", "Stormy Seas", "Pirate Ambush", "Merfolk Encounter", "Ghost Ship", "Treasure Island"],
-      landFightNames: ["Battle", "Ambush", "Raid", "Skirmish", "Siege", "Invasion"],
-      landEnemyNames: ["Goblin", "Orc", "Troll", "Bandit", "Wolf", "Bear", "Zombie", "Skeleton"],
-      navalFightNames: ["Naval Battle", "Boarding Action", "Shipwreck", "Treasure Hunt", "Storm Encounter"],
-      navalEnemyNames: ["Pirate", "Merfolk", "Kraken", "Sea Serpent", "Ghost Ship", "Nautilus", "Giant Squid"],
-      explorationNames: ["Island Discovery", "Coral Reef Dive", "Underwater Ruins", "Oceanic Voyage"],
-      socialInteractionNames: ["Trade", "Diplomacy", "Bargain", "Festival", "Feast", "Ritual"],
+      landEventNames: ["Ukryta Zatoka", "Opuszczona Forteca", "Kryjówka Przemytników", "Skarbowa Kryjówka", "Nawiedzony Las", "Starożytne Ruiny", "Zaginiona Wioska", "Kamienny Krąg", "Jaskinia Cieni", "Polana Duchów"],
+      navalEventNames: ["Wrak Statku", "Burzliwe Morza", "Zasadzka Piratów", "Spotkanie z Syrenami", "Statek Widmo", "Wyspa Skarbów", "Zatoka Wraków", "Prąd Morski", "Mglista Laguna", "Sztormowa Przełęcz"],
+      landFightNames: ["Bitwa", "Zasadzka", "Najazd", "Potyczka", "Oblężenie", "Inwazja", "Starcie", "Walka w Lesie", "Obrona Wioski", "Atak na Fort"],
+      landEnemyNames: ["Goblin", "Ork", "Troll", "Bandyta", "Wilk", "Niedźwiedź", "Zombie", "Szkielet", "Czarnoksiężnik", "Upiór", "Dziki Dzik", "Jadowity Wąż"],
+      navalFightNames: ["Bitwa Morska", "Abordaż", "Wrak Statku", "Poszukiwanie Skarbu", "Spotkanie z Burzą", "Atak Rekinów", "Walka z Korsarzami", "Obrona Statku", "Sztormowa Bitwa"],
+      navalEnemyNames: ["Pirat", "Syrena", "Kraken", "Wąż Morski", "Statek Widmo", "Nautilus", "Olbrzymia Kałamarnica", "Morski Demon", "Kapitan Widmo", "Mroczna Fregata"],
+      explorationNames: ["Odkrycie Wyspy", "Nurkowanie na Rafie Koralowej", "Podwodne Ruiny", "Oceaniczna Podróż", "Tajemnicza Jaskinia", "Zaginiona Latarnia", "Mapa Skarbów", "Zatopiona Świątynia"],
+      socialInteractionNames: ["Handel", "Dyplomacja", "Targowanie", "Festiwal", "Uczta", "Rytuał", "Spotkanie z Kupcem", "Negocjacje", "Sojusz", "Wizyta w Karczmie"],
+      directions: ["Północ", "Południe", "Wschód", "Zachód", "Północny Wschód", "Północny Zachód", "Południowy Wschód", "Południowy Zachód"]
     }
 
     const resources = {
@@ -131,10 +132,9 @@
         this.name = names.explorationNames[Math.floor(Math.random() * names.explorationNames.length)];
 
         this.path = Array.from({ length: Math.floor(Math.random() * 19) + 2 }, () => {
-          const directions = ["North", "East", "South", "West"];
-          return directions.splice(Math.floor(Math.random() * directions.length), 1)[0];
+          return names.directions.splice(Math.floor(Math.random() * names.directions.length), 1)[0];
         }).filter((direction, index, array) => {
-          return index === 0 || direction !== array[index - 1];
+          return index === 0 || names.direction !== array[index - 1];
         });
 
         this.rewards = new RewardsGenerator(
