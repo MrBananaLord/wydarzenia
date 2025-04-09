@@ -14,14 +14,19 @@
 
     button {
       padding: 10px 20px;
-      font-size: 16px;
       cursor: pointer;
     }
 
-    #event-display {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px;
+      background-color: #f9f9f9;
+    }
+
+    #current-event .card {
+      background-color: #e0f7fa;
     }
   </style>
 </head>
@@ -30,11 +35,14 @@
   <div>
     <h1>Talia wydarzeń</h1>
     <button id="draw-card">Ciągnij</button>
-    <div id="event-display"></div>
+    <div id="current-event"></div>
+    <div id="event-log"></div>
   </div>
 
   <script>
     const names = {
+      landEventNames: ["Hidden Cove", "Abandoned Fort", "Smuggler's Den", "Treasure Cache", "Haunted Forest", "Ancient Ruins"],
+      navalEventNames: ["Shipwreck", "Stormy Seas", "Pirate Ambush", "Merfolk Encounter", "Ghost Ship", "Treasure Island"],
       landFightNames: ["Battle", "Ambush", "Raid", "Skirmish", "Siege", "Invasion"],
       landEnemyNames: ["Goblin", "Orc", "Troll", "Bandit", "Wolf", "Bear", "Zombie", "Skeleton"],
       navalFightNames: ["Naval Battle", "Boarding Action", "Shipwreck", "Treasure Hunt", "Storm Encounter"],
@@ -44,17 +52,17 @@
     }
 
     const resources = {
-      epic_story: { name: "Epicka historia", cost: 5, weight: 1 },
-      character: { name: "Postać", cost: 2, weight: 2 },
-      gold: { name: "Zołto", cost: 1, weight: 3 },
-      rum: { name: "Rum", cost: 1, weight: 3 },
-      spice: { name: "Przyprawa", cost: 2, weight: 4 },
+      epic_story: { name: "Epicka historia", cost: 6, weight: 5 },
+      character: { name: "Postać", cost: 4, weight: 2 },
+      gold: { name: "Zołto", cost: 2, weight: 3 },
+      rum: { name: "Rum", cost: 2, weight: 3 },
+      spice: { name: "Przyprawa", cost: 4, weight: 3 },
     }
 
     class RewardsGenerator {
       constructor(points) {
         this.points = points;
-        this.rewardsPool = resources;
+        this.rewardsPool = Object.values(resources);
       }
 
       rewards() {
@@ -78,8 +86,8 @@
 
 
     class FightAction {
-      constructor() {
-        this.type = Math.random() < 0.5 ? "land" : "naval";
+      constructor(type) {
+        this.type = type
 
         this.name = this.type === "land"
           ? names.landFightNames[Math.floor(Math.random() * names.landFightNames.length)]
@@ -94,14 +102,32 @@
         }));
 
         this.rewards = new RewardsGenerator(
-          this.enemies.reduce((sum, enemy) => sum + enemy.attack, 0) +
-          this.enemies.reduce((sum, enemy) => sum + enemy.health, 0)
+          (
+            this.enemies.reduce((sum, enemy) => sum + enemy.attack, 0) +
+            this.enemies.reduce((sum, enemy) => sum + enemy.health, 0)
+          ) / 4
         ).rewards();
+      }
+
+      get icon() {
+        return this.type === "land" ? "⚔️" : "⛵️";
+      }
+
+      get body() {
+        return `
+        <h4>${this.name}</h4>
+        <h5>Wrogowie</h5> 
+        ${this.enemies.map(enemy =>
+          `<p>${enemy.name} (HP: ${enemy.health}, Atak: ${enemy.attack})</p>`
+        ).join("")}
+        <h5>Nagroda</h5> 
+        <p>${this.rewards.join(", ")}</p>
+        `;
       }
     }
 
     class ExploreAction {
-      constructor() {
+      constructor(type) {
         this.name = names.explorationNames[Math.floor(Math.random() * names.explorationNames.length)];
 
         this.path = Array.from({ length: Math.floor(Math.random() * 19) + 2 }, () => {
@@ -115,16 +141,41 @@
           this.path.length
         ).rewards();
       }
+
+      get icon() {
+        return "🗺️"
+      }
+
+      get body() {
+        return `
+        <h4>${this.name}</h4>
+        <p>Ścieżka: ${this.path.join(", ")}</p>
+        <p>Nagroda: ${this.rewards.join(", ")}</p>
+        `;
+      }
     }
 
     class SocialAction {
-      constructor() {
+      constructor(type) {
         this.name = names.socialInteractionNames[Math.floor(Math.random() * names.socialInteractionNames.length)];
         this.demand = Array.from(new Set([
           resources.gold,
           Object.values(resources)[Math.floor(Math.random() * Object.values(resources).length)]
         ]));
         this.production = Object.values(resources).filter(resource => resource.name !== "Epicka historia")[Math.floor(Math.random() * (Object.values(resources).length - 1))];
+      }
+
+      get icon() {
+        return "🤝"
+      }
+
+      get body() {
+
+        return `
+          <h4>${this.name}</h4>
+          <p>Zapotrzebowanie: ${this.demand.map(d => d.name).join(", ")}</p>
+          <p>Nagroda: ${this.production.name}</p>
+        `;
       }
     }
 
@@ -136,17 +187,62 @@
         SocialAction
       ];
 
-      constructor(name) {
-        this.name = name;
+      constructor() {
+        this.type = Math.random() < 0.5 ? "land" : "naval";
+        this.name = this.type === "land"
+          ? names.landEventNames[Math.floor(Math.random() * names.landEventNames.length)]
+          : names.navalEventNames[Math.floor(Math.random() * names.navalEventNames.length)];
       }
 
-      actions() {
-        const possibleActions = Event.actionClasses.map(ActionClass => new ActionClass());
+      get actions() {
+        const possibleActions = Event.actionClasses.map(ActionClass => new ActionClass(this.type));
         const randomCount = Math.floor(Math.random() * possibleActions.length) + 1;
         return possibleActions.slice(0, randomCount);
       }
+
+      get body() {
+        return `
+          <div class="card">
+            <h2>${this.name}</h2>
+            ${this.actions.map(action => `
+            <div>
+              <h3>${action.icon} ${action.name}</h3>
+              <div>${action.body}</div>
+            </div>
+            `).join('')}
+          </div>
+        `
+      }
     }
 
+    const generateEvents = () => {
+      const events = [];
+      for (let i = 0; i < 100; i++) {
+        const event = new Event();
+        events.push(event);
+      }
+      return events;
+    };
+
+    const printEvents = (events) => {
+      const eventDisplay = document.getElementById("event-display");
+      eventDisplay.innerHTML = events.map(event => event.body).join('');
+    };
+
+
+    const events = generateEvents();
+    const currentEventDiv = document.getElementById("current-event");
+    const eventLogDiv = document.getElementById("event-log");
+
+    document.getElementById("draw-card").addEventListener("click", () => {
+      const randomEvent = events.pop();
+
+      if (currentEventDiv.innerHTML.trim() !== "") {
+        eventLogDiv.innerHTML = currentEventDiv.innerHTML + eventLogDiv.innerHTML;
+      }
+
+      currentEventDiv.innerHTML = randomEvent.body;
+    });
 
 
   </script>
